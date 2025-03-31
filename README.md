@@ -44,6 +44,9 @@ Tools is where you will put your custom class of your tool to create any by your
 # TODO
 
 - [ ] implement todoist service
+    - [ ] def create_project(self): pass
+    - [ ] def create_section(self): pass
+    - [ ] def get_task_comments(self): pass
 - [ ] implement google docs reader service
 - [ ] implement google sheets reader service
 - [ ] implement gemini service
