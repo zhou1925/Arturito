@@ -77,6 +77,29 @@ class TodoistService:
             logger.error(f"Error replacing labels for task {task_id}: {e}", exc_info=True)
             return False
 
+    def add_task(self, content: str, due_string: Optional[str] = None, project_id: Optional[str] = None, labels: Optional[List[str]] = None, section_id: Optional[str] = None, **kwargs: Any) -> Optional[Task]:
+        """
+        Adds a new task. Accepts standard Todoist arguments and extra kwargs.
+        """
+        if not content or not content.strip():
+            logger.warning("Attempted to add task with empty or whitespace-only content.")
+            return None
+        logger.debug(f"Adding task: {content[:20]}...")
+        try:
+            task = self.api.add_task(
+                content=content,
+                due_string=due_string,
+                project_id=project_id,
+                labels=labels,
+                section_id=section_id,
+                **kwargs
+            )
+            logger.info(f"Task '{task.content}' added successfully with ID: {task.id}")
+            return task
+        except Exception as e:
+            logger.error(f"Error adding task '{content[:20]}...': {e}", exc_info=True)
+            return None
+
 if __name__ == '__main__':
     import sys
 
@@ -123,6 +146,7 @@ if __name__ == '__main__':
             
             print("\n--- Testing task id fetching ---")
             test_get_task_by_id = todoist_service.get_task_by_id(test_task_id)
+            print(test_get_task_by_id)
             print(f"task: {test_get_task_by_id.content} - ID: {test_get_task_by_id.id}")
 
             print("\n--- Testing adding a comment to a task by id ---")
@@ -141,6 +165,23 @@ if __name__ == '__main__':
 
             if "revisado" in test_get_task_by_id.labels:
                 print("label added successfully ", test_get_task_by_id.labels)
+
+            print("\n--- labels updated! ---")
+            
+            time.sleep(1)
+            print("\n--- Testing create task ---")
+            project_id = test_get_task_by_id.project_id if test_get_task_by_id.project_id else ""
+            section_id = test_get_task_by_id.section_id if test_get_task_by_id.section_id else ""
+            due_string = ""
+            labels = []
+            test_create_task = todoist_service.add_task(
+                content="test task",
+                due_string=due_string,
+                project_id=project_id,
+                labels=labels,
+                section_id=section_id
+            )
+            print("\n--- task added! ---")
 
     except ValueError as e:
         print(f"Configuration Error: {e}")
