@@ -33,6 +33,15 @@ class TodoistService:
             logger.error(f"Error fetching tasks with filter '{filter_string}': {e}", exc_info=True)
             return []
 
+    def get_task_by_id(self, task_id: str) -> Optional[Task]:
+        """Gets a single task by its ID."""
+        logger.debug(f"Fetching task with ID: {task_id}")
+        try:
+            task = self.api.get_task(task_id=task_id)
+            return task
+        except Exception as e:
+            logger.error(f"Error fetching task {task_id}: {e}", exc_info=True)
+            return None
 
 if __name__ == '__main__':
     import sys
@@ -62,16 +71,23 @@ if __name__ == '__main__':
             todoist_service = TodoistService(api_key=api_key)
 
             print("\n--- Testing Task Fetching ---")
-            test_filter = "@arturito"
+            test_filter = "@arturito" # @buscar, @arturito
             print(f"Fetching tasks with filter: '{test_filter}'...")
             filtered_tasks = todoist_service.get_tasks_by_filter(test_filter)
             
             if filtered_tasks:
                 print(f"Found {len(filtered_tasks)} tasks:")
+                for t in filtered_tasks:
+                    print(f"task ID: {t.id}")
             else:
                 print(f"No tasks found with filter '{test_filter}'. Cannot run update tests on existing tasks.")
             
-            test_task_for_updates: Optional[Task] = None
+
+            test_task_id = filtered_tasks[0].id if filtered_tasks else ""
+            
+            print("\n--- Testing task id fetching ---")
+            test_get_task_by_id = todoist_service.get_task_by_id(test_task_id)
+            print(f"task: {test_get_task_by_id.content} - ID: {test_get_task_by_id.id}")
             
     except ValueError as e:
         print(f"Configuration Error: {e}")
