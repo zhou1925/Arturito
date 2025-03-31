@@ -99,6 +99,20 @@ class TodoistService:
         except Exception as e:
             logger.error(f"Error adding task '{content[:20]}...': {e}", exc_info=True)
             return None
+    
+    def complete_task(self, task_id: str) -> bool:
+        """Marks a task as complete. : recieve and ID """
+        logger.debug(f"Completing task {task_id}")
+        try:
+            is_success = self.api.close_task(task_id=task_id)
+            if is_success:
+                 logger.info(f"Task {task_id} completed successfully.")
+            else:
+                 logger.warning(f"Close task API call returned {is_success} for task {task_id}.")
+            return is_success
+        except Exception as e:
+            logger.error(f"Error completing task {task_id}: {e}", exc_info=True)
+            return False
 
 if __name__ == '__main__':
     import sys
@@ -146,7 +160,7 @@ if __name__ == '__main__':
             
             print("\n--- Testing task id fetching ---")
             test_get_task_by_id = todoist_service.get_task_by_id(test_task_id)
-            print(test_get_task_by_id)
+            #print(test_get_task_by_id)
             print(f"task: {test_get_task_by_id.content} - ID: {test_get_task_by_id.id}")
 
             print("\n--- Testing adding a comment to a task by id ---")
@@ -182,6 +196,13 @@ if __name__ == '__main__':
                 section_id=section_id
             )
             print("\n--- task added! ---")
+
+            time.sleep(1)
+            print("\n--- Testing complete task ---")
+            completed = todoist_service.complete_task(test_create_task.id)
+
+            print("\n--- task completed! ---")
+            
 
     except ValueError as e:
         print(f"Configuration Error: {e}")
