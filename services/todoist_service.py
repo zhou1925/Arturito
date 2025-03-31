@@ -100,6 +100,30 @@ class TodoistService:
             logger.error(f"Error adding task '{content[:20]}...': {e}", exc_info=True)
             return None
     
+    def update_task(self, task_id: str, **updates: Any) -> bool:
+        """
+        Updates a task with the provided keyword arguments.
+        Example: update_task(task_id, content="New name", priority=2)
+        Valid kwargs include: content, description, labels, priority, due_string,
+                              due_date, due_datetime, due_lang, assignee_id.
+        Note: Using 'labels' here will *replace* all existing labels.
+        """
+        if not updates:
+            logger.warning(f"Called update_task for task {task_id} with no updates specified.")
+            return False
+
+        logger.debug(f"Updating task {task_id} with data: {updates}")
+        try:
+            is_success = self.api.update_task(task_id=task_id, **updates)
+            if is_success:
+                logger.info(f"Task {task_id} updated successfully with provided data.")
+            else:
+                logger.warning(f"General update task API call returned {is_success} for task {task_id}.")
+            return is_success
+        except Exception as e:
+            logger.error(f"Error updating task {task_id} with data {updates}: {e}", exc_info=True)
+            return False
+    
     def complete_task(self, task_id: str) -> bool:
         """Marks a task as complete. : recieve and ID """
         logger.debug(f"Completing task {task_id}")
@@ -198,11 +222,19 @@ if __name__ == '__main__':
             print("\n--- task added! ---")
 
             time.sleep(1)
+            print(f"\n--- Testing Content Update on Task ID: {test_create_task.id} ---")
+            general_updates = {
+                    "content": f"General Update @ {datetime.now().strftime('%H:%M:%S')}",
+                    "priority": 4
+                }
+            print(f"  Applying general updates: {general_updates}")
+            general_updated = todoist_service.update_task(test_create_task.id, **general_updates)
+            
+            
+            time.sleep(1)
             print("\n--- Testing complete task ---")
             completed = todoist_service.complete_task(test_create_task.id)
-
             print("\n--- task completed! ---")
-            
 
     except ValueError as e:
         print(f"Configuration Error: {e}")
