@@ -43,6 +43,23 @@ class TodoistService:
             logger.error(f"Error fetching task {task_id}: {e}", exc_info=True)
             return None
 
+    def add_comment(self, task_id: str, content: str) -> Optional[Comment]:
+        """Adds a comment to a specific task."""
+        if not content or not content.strip():
+            logger.warning(f"Attempted to add empty or whitespace-only comment to task {task_id}")
+            return None
+        if not task_id:
+            logger.warning(f"Attempted to add a comment but ID not received")
+
+        logger.debug(f"Adding comment to task {task_id}: {content[:20]}...")
+        try:
+            comment = self.api.add_comment(task_id=task_id, content=content)
+            logger.info(f"Comment added successfully to task {task_id}.")
+            return comment
+        except Exception as e:
+            logger.error(f"Error adding comment to task {task_id}: {e}", exc_info=True)
+            return None
+
 if __name__ == '__main__':
     import sys
 
@@ -88,7 +105,14 @@ if __name__ == '__main__':
             print("\n--- Testing task id fetching ---")
             test_get_task_by_id = todoist_service.get_task_by_id(test_task_id)
             print(f"task: {test_get_task_by_id.content} - ID: {test_get_task_by_id.id}")
-            
+
+            print("\n--- Testing adding a comment to a task by id ---")
+            comment_test = "hey I am a comment!"
+            todoist_service.add_comment(test_get_task_by_id.id, comment_test)
+            print("--- comment added --- ")
+
+
+
     except ValueError as e:
         print(f"Configuration Error: {e}")
         logger.exception("Configuration error during testing.")
