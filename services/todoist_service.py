@@ -59,9 +59,28 @@ class TodoistService:
         except Exception as e:
             logger.error(f"Error adding comment to task {task_id}: {e}", exc_info=True)
             return None
+    
+    def update_task_labels(self, task_id: str, new_labels: List[str]) -> bool:
+        """
+        Updates the labels/tags of a task, *replacing* all existing ones.
+        Use add_task_label or remove_task_label for granular changes.
+        """
+        logger.debug(f"Replacing labels for task {task_id} with: {new_labels}")
+        try:
+            is_success = self.api.update_task(task_id=task_id, labels=new_labels)
+            if is_success:
+                logger.info(f"Labels replaced successfully for task {task_id}.")
+            else:
+                logger.warning(f"Update task labels API call returned {is_success} for task {task_id}.")
+            return is_success
+        except Exception as e:
+            logger.error(f"Error replacing labels for task {task_id}: {e}", exc_info=True)
+            return False
 
 if __name__ == '__main__':
     import sys
+
+    import time
 
     current_dir = os.path.dirname(os.path.abspath(__file__))
     parent_dir = os.path.abspath(os.path.join(current_dir, '..'))
@@ -108,10 +127,20 @@ if __name__ == '__main__':
 
             print("\n--- Testing adding a comment to a task by id ---")
             comment_test = "hey I am a comment!"
-            todoist_service.add_comment(test_get_task_by_id.id, comment_test)
+            todoist_service.add_comment(test_task_id, comment_test)
             print("--- comment added --- ")
 
+            time.sleep(1)
+            print("\n--- Testing update labels of a task ---")
+            labels_to_add = ["revisado"]
+            
+            current_labels = test_get_task_by_id.labels
+            new_labels = current_labels + labels_to_add
+            label_added = todoist_service.update_task_labels(test_task_id, new_labels)
+            test_get_task_by_id = todoist_service.get_task_by_id(test_task_id)
 
+            if "revisado" in test_get_task_by_id.labels:
+                print("label added successfully ", test_get_task_by_id.labels)
 
     except ValueError as e:
         print(f"Configuration Error: {e}")
