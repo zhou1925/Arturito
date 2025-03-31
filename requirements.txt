@@ -1,0 +1,7 @@
+python-dotenv==1.1.0
+todoist_api_python==2.1.7
+google-generativeai==0.8.4
+requests==2.32.3
+beautifulsoup4
+fpdf==1.7.2
+schedule==1.2.2
