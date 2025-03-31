@@ -43,17 +43,18 @@ class TodoistService:
             logger.error(f"Error fetching task {task_id}: {e}", exc_info=True)
             return None
 
-    def add_comment(self, task_id: str, content: str) -> Optional[Comment]:
-        """Adds a comment to a specific task."""
+    def add_comment(self, task_id: str, content: str, attachment: Optional[Dict] = None) -> Optional[Comment]:
+        """Adds a comment to a specific task, optionally with an attachment."""
         if not content or not content.strip():
             logger.warning(f"Attempted to add empty or whitespace-only comment to task {task_id}")
             return None
         if not task_id:
             logger.warning(f"Attempted to add a comment but ID not received")
-
+            return None
+        
         logger.debug(f"Adding comment to task {task_id}: {content[:20]}...")
         try:
-            comment = self.api.add_comment(task_id=task_id, content=content)
+            comment = self.api.add_comment(task_id=task_id, content=content, attachment=attachment)
             logger.info(f"Comment added successfully to task {task_id}.")
             return comment
         except Exception as e:
