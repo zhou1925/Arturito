@@ -340,13 +340,6 @@ if __name__ == '__main__':
             test_section_name = "Test Section"
             print(f"Creating section '{test_section_name}' in project {new_project.id}...")
             new_section = todoist_service.create_section(project_id=new_project.id, name=test_section_name)
-            time.sleep(1)
-            print("\n--- Testing Add Task to Section ---")
-            section_task = todoist_service.add_task(
-                content="Section Task",
-                project_id=new_project.id,
-                section_id=new_section.id,
-            )
 
             if section_task:
                 print(f"Task '{section_task.content}' added to section '{test_section_name}' (ID: {new_section.id}).")

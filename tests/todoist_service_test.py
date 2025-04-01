@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 from todoist_api_python.api import Task, Comment
 from services.todoist_service import TodoistService
 
-# Use full required fields for Task and Comment objects.
+
 def create_mock_task(task_id, content):
     return Task(
         id=task_id,
@@ -156,3 +156,100 @@ def test_complete_task_failure(todoist_service, mock_todoist_api):
     mock_todoist_api.close_task.side_effect = Exception("API error")
     result = todoist_service.complete_task("123")
     assert result is False
+
+
+def test_delete_project_success(todoist_service, mock_todoist_api):
+    """Test successfully deleting a project."""
+    mock_todoist_api.delete_project.return_value = True
+    result = todoist_service.delete_project("2000")
+    assert result is True
+
+def test_delete_project_failure(todoist_service, mock_todoist_api):
+    """Test failure in deleting a project due to API error."""
+    mock_todoist_api.delete_project.side_effect = Exception("API error")
+    result = todoist_service.delete_project("2000")
+    assert result is False
+
+
+def test_create_project_success(todoist_service, mock_todoist_api):
+    """Test successfully creating a project."""
+    mock_project = MagicMock()
+    mock_project.id = "3000"
+    mock_project.name = "New Project"
+    mock_todoist_api.add_project.return_value = mock_project
+
+    project = todoist_service.create_project("New Project")
+    assert project is not None
+    assert project.id == "3000"
+
+
+def test_create_project_failure(todoist_service, mock_todoist_api):
+    """Test failure in creating a project."""
+    mock_todoist_api.add_project.side_effect = Exception("API error")
+    project = todoist_service.create_project("New Project")
+    assert project is None
+
+
+def test_get_sections_success(todoist_service, mock_todoist_api):
+    """Test retrieving sections successfully."""
+    mock_section = {"id": "4000", "name": "Section 1", "project_id": "2000"}
+    mock_todoist_api.get_sections.return_value = [mock_section]
+
+    sections = todoist_service.get_sections("2000")
+    assert len(sections) == 1
+    assert sections[0]["id"] == "4000"
+
+def test_get_sections_failure(todoist_service, mock_todoist_api):
+    """Test failure in retrieving sections due to API error."""
+    mock_todoist_api.get_sections.side_effect = Exception("API error")
+    sections = todoist_service.get_sections("2000")
+    assert sections is None
+
+
+def test_create_section_success(todoist_service, mock_todoist_api):
+    """Test successfully creating a section."""
+    mock_section = MagicMock()
+    mock_section.id = "5000"
+    mock_section.name = "New Section"
+    mock_section.project_id = "2000"
+    mock_todoist_api.add_section.return_value = mock_section
+
+    section = todoist_service.create_section("2000", "New Section")
+    assert section is not None
+    assert section.id == "5000"
+
+
+def test_create_section_failure(todoist_service, mock_todoist_api):
+    """Test failure in creating a section."""
+    mock_todoist_api.add_section.side_effect = Exception("API error")
+    section = todoist_service.create_section("2000", "New Section")
+    assert section is None
+
+
+def test_delete_section_success(todoist_service, mock_todoist_api):
+    """Test successfully deleting a section."""
+    mock_todoist_api.delete_section.return_value = True
+    result = todoist_service.delete_section("5000")
+    assert result is True
+
+def test_delete_section_failure(todoist_service, mock_todoist_api):
+    """Test failure in deleting a section due to API error."""
+    mock_todoist_api.delete_section.side_effect = Exception("API error")
+    result = todoist_service.delete_section("5000")
+    assert result is False
+
+
+def test_get_task_comments_success(todoist_service, mock_todoist_api):
+    """Test retrieving comments for a task successfully."""
+    mock_comment = create_mock_comment("789", "Sample Comment")
+    mock_todoist_api.get_comments.return_value = [mock_comment]
+
+    comments = todoist_service.get_task_comments("123")
+    assert len(comments) == 1
+    assert comments[0].id == "789"
+
+def test_get_task_comments_failure(todoist_service, mock_todoist_api):
+    """Test failure in retrieving comments due to API error."""
+    mock_todoist_api.get_comments.side_effect = Exception("API error")
+    comments = todoist_service.get_task_comments("123")
+    assert comments is None
