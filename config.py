@@ -1,4 +1,3 @@
-# config.py
 import os
 import logging
 from dotenv import load_dotenv
@@ -16,6 +15,7 @@ class ConfigManager:
         "TODOIST_API_KEY",
         "GOOGLE_API_KEY",
         "SERPER_API_KEY",
+        "CLOUDINARY_API_KEY"
     ]
 
     def __init__(self, dotenv_path: Optional[str] = None, override_dotenv: bool = False):
@@ -27,7 +27,6 @@ class ConfigManager:
         if loaded_path:
             logger.info(f"Configuration loaded from .env file: {loaded_path}")
         else:
-            # It's usually critical to have a .env file for this setup
             logger.warning("No .env file found or specified. Application might fail if env vars are not set externally.")
 
 
