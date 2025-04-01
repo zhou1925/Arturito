@@ -8,6 +8,9 @@ The pronounciation in spanish sounds like: “ar-tu-di-tu”. So that is the ori
 - help with common tasks like web search, pdf creation, slides creation
 - 
 
+## WHY?
+I am lazy so i become productive doing something can improve my laziness
+
 ## What can do?
 - Connect with your Todoist API and fetch all tasks assigned to him by example tag: @arturito
 - labels from todoist are used for actions
@@ -44,7 +47,7 @@ Tools is where you will put your custom class of your tool to create any by your
 # TODO
 
 - [X] implement todoist service
-- [ ] implement google docs reader service
+- [X] implement google docs reader service
 - [ ] implement google sheets reader service
 - [ ] implement gemini service
 - [ ] implement cloudinary service (handle files)
