@@ -172,9 +172,65 @@ class TodoistService:
             logger.error(f"Error creating project '{name}': {e}", exc_info=True)
             return None
             
-    def create_section(self): pass
+
+    def get_sections(self, project_id: str) -> Optional[List[Dict]]:
+        """Retrieves all sections for a given project ID.
+        Args:
+            project_id: The ID of the project to retrieve sections from.
+        Returns:
+            A list of dictionaries representing the sections, or None if an error occurs.
+        """
+        logger.debug(f"Fetching sections for project ID: {project_id}")
+        try:
+            sections = self.api.get_sections(project_id=project_id)
+            logger.info(f"Found {len(sections)} sections for project {project_id}.")
+            return sections
+        except Exception as e:
+            logger.error(f"Error fetching sections for project {project_id}: {e}", exc_info=True)
+            return None
+
+    def create_section(self, project_id: str, name: str) -> Optional[Dict]:
+        """Creates a new section in a project.
+        Args:
+            project_id: The ID of the project to create the section in.
+            name: The name of the section.
+        Returns:
+            The newly created section as a dictionary, or None on failure.
+        """
+        logger.debug(f"Creating section '{name}' in project ID: {project_id}")
+        try:
+            section = self.api.add_section(name=name, project_id=project_id)
+            logger.info(f"Section '{name}' created successfully in project {project_id} with ID: {section.id}")
+            return section
+        except Exception as e:
+            logger.error(f"Error creating section '{name}' in project {project_id}: {e}", exc_info=True)
+            return None
+
+    def delete_section(self,section_id: str) -> bool:
+        try:
+            is_success = self.api.delete_section(section_id=section_id)
+            logger.info(f"Section '{section_id}' deleted successfully")
+            return True
+        except Exception as error:
+            logger.error(f"Error deleting: {error}", exc_info=True)
+            return False
 
     def get_task_comments(self): pass
+        """Retrieves all sections for a given project ID.
+        Args:
+            project_id: The ID of the project to retrieve sections from.
+        Returns:
+            A list of dictionaries representing the sections, or None if an error occurs.
+        """
+        logger.debug(f"Fetching sections for project ID: {project_id}")
+        try:
+            sections = self.api.get_sections(project_id=project_id)
+            logger.info(f"Found {len(sections)} sections for project {project_id}.")
+            return sections
+        except Exception as e:
+            logger.error(f"Error fetching sections for project {project_id}: {e}", exc_info=True)
+            return None
+
 
 if __name__ == '__main__':
     import sys
@@ -279,6 +335,44 @@ if __name__ == '__main__':
             test_project_name = "Test Project"
             print(f"Creating project '{test_project_name}'...")
             new_project = todoist_service.create_project(name=test_project_name)
+            time.sleep(1)
+            print("\n--- Testing Section Creation, Retrieval, and Deletion ---")
+            test_section_name = "Test Section"
+            print(f"Creating section '{test_section_name}' in project {new_project.id}...")
+            new_section = todoist_service.create_section(project_id=new_project.id, name=test_section_name)
+
+            if new_section:
+                time.sleep(10)
+                print(f"Retrieving sections for project {new_project.id}...")
+                sections = todoist_service.get_sections(project_id=new_project.id)
+
+                if sections:
+                    print(f"Found {len(sections)} sections.")
+                    section_to_delete_id = new_section.id
+                    print(f"Deleting section '{test_section_name}' (ID: {section_to_delete_id})...")
+                    deleted_section = todoist_service.delete_section(section_id=section_to_delete_id)
+
+                    if deleted_section:
+                        print(f"Section '{test_section_name}' (ID: {section_to_delete_id}) deleted successfully.")
+                    else:
+                        print(f"Failed to delete section '{test_section_name}' (ID: {section_to_delete_id}).")
+                else:
+                    print(f"No sections found for project {new_project.id}.")
+            else:
+                print(f"Failed to create section '{test_section_name}' in project {new_project.id}.")
+
+
+            if new_project:
+                time.sleep(1)
+                deleted = todoist_service.delete_project(new_project.id)
+                if deleted:
+                    print(f"Project '{test_project_name}' (ID: {new_project.id}) deleted successfully.")
+            print("\n--- Testing Project Creation and Deletion ---")
+            test_project_name = "Test Project"
+            print(f"Creating project '{test_project_name}'...")
+            new_project = todoist_service.create_project(name=test_project_name)
+
+
 
             if new_project:
                 time.sleep(1)
