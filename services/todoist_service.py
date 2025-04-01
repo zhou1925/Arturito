@@ -215,20 +215,20 @@ class TodoistService:
             logger.error(f"Error deleting: {error}", exc_info=True)
             return False
 
-    def get_task_comments(self): pass
-        """Retrieves all sections for a given project ID.
+    def get_task_comments(self, task_id: str) -> Optional[List[Comment]]:
+        """Retrieves all comments for a given task ID.
         Args:
-            project_id: The ID of the project to retrieve sections from.
+            task_id: The ID of the task to retrieve comments from.
         Returns:
-            A list of dictionaries representing the sections, or None if an error occurs.
+            A list of Comment objects, or None if an error occurs.
         """
-        logger.debug(f"Fetching sections for project ID: {project_id}")
+        logger.debug(f"Fetching comments for task ID: {task_id}")
         try:
-            sections = self.api.get_sections(project_id=project_id)
-            logger.info(f"Found {len(sections)} sections for project {project_id}.")
-            return sections
+            comments = self.api.get_comments(task_id=task_id)
+            logger.info(f"Found {len(comments)} comments for task {task_id}.")
+            return comments
         except Exception as e:
-            logger.error(f"Error fetching sections for project {project_id}: {e}", exc_info=True)
+            logger.error(f"Error fetching comments for task {task_id}: {e}", exc_info=True)
             return None
 
 
@@ -340,6 +340,45 @@ if __name__ == '__main__':
             test_section_name = "Test Section"
             print(f"Creating section '{test_section_name}' in project {new_project.id}...")
             new_section = todoist_service.create_section(project_id=new_project.id, name=test_section_name)
+            time.sleep(1)
+            print("\n--- Testing Add Task to Section ---")
+            section_task = todoist_service.add_task(
+                content="Section Task",
+                project_id=new_project.id,
+                section_id=new_section.id,
+            )
+
+            if section_task:
+                print(f"Task '{section_task.content}' added to section '{test_section_name}' (ID: {new_section.id}).")
+
+                time.sleep(1)
+                print("\n--- Testing Task Comments ---")
+                comment_text1 = "This is comment 1."
+                comment_text2 = "This is comment 2."
+
+                comment1 = todoist_service.add_comment(section_task.id, comment_text1)
+                comment2 = todoist_service.add_comment(section_task.id, comment_text2)
+
+                if comment1 and comment2:
+                    print("Comments added successfully.")
+
+                    time.sleep(1)
+                    print("\n--- Testing Get Task Comments ---")
+                    task_comments = todoist_service.get_task_comments(section_task.id)
+
+                    if task_comments:
+                        print(f"Found {len(task_comments)} comments for task '{section_task.content}':")
+                        for comment in task_comments:
+                            print(f"- {comment.content}")
+                    else:
+                        print(f"No comments found for task '{section_task.content}'.")
+
+                else:
+                    print("Failed to add comments to the task.")
+
+            else:
+                print(f"Failed to add task to section '{test_section_name}'.")
+            
 
             if new_section:
                 time.sleep(10)
