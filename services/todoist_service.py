@@ -139,6 +139,43 @@ class TodoistService:
             logger.error(f"Error completing task {task_id}: {e}", exc_info=True)
             return False
 
+    def delete_project(self, project_id: str) -> bool:
+        """Deletes a project by its ID.
+        Args:
+            project_id: The ID of the project to delete.
+        Returns:
+            True if the project was successfully deleted, False otherwise.
+        """
+        try:
+            is_success = self.api.delete_project(project_id=project_id)
+            if is_success:
+                logger.info(f"Project {project_id} deleted successfully.")
+            else:
+                logger.warning(f"Delete project API call returned {is_success} for project {project_id}.")
+            return is_success
+        except Exception as e:
+            logger.error(f"Error deleting project {project_id}: {e}", exc_info=True)
+            return False
+    
+    def create_project(self, name: str) -> Optional[Dict]:
+        """Creates a new project.
+        Args:
+            name: The name of the project.
+        Returns:
+            The newly created project as a dictionary, or None on failure.
+        """
+        try:
+            project = self.api.add_project(name=name)
+            logger.info(f"Project '{name}' created successfully with ID: {project.id}")
+            return project
+        except Exception as e:
+            logger.error(f"Error creating project '{name}': {e}", exc_info=True)
+            return None
+            
+    def create_section(self): pass
+
+    def get_task_comments(self): pass
+
 if __name__ == '__main__':
     import sys
 
@@ -236,6 +273,22 @@ if __name__ == '__main__':
             print("\n--- Testing complete task ---")
             completed = todoist_service.complete_task(test_create_task.id)
             print("\n--- task completed! ---")
+
+            time.sleep(1)
+            print("\n--- Testing Project Creation and Deletion ---")
+            test_project_name = "Test Project"
+            print(f"Creating project '{test_project_name}'...")
+            new_project = todoist_service.create_project(name=test_project_name)
+
+            if new_project:
+                time.sleep(1)
+                deleted = todoist_service.delete_project(new_project.id)
+                if deleted:
+                    print(f"Project '{test_project_name}' (ID: {new_project.id}) deleted successfully.")
+
+    except FileNotFoundError as e:
+        print(f"File Not Found Error: {e}")
+        logger.exception("File Not Found error during testing.")
 
     except ValueError as e:
         print(f"Configuration Error: {e}")
