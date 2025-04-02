@@ -1,15 +1,15 @@
-# Arturito Bot
-Arturito is a bot wiht generative AI that can assist you with his tools
+# Arturito Bot with TODOIST 
+Arturito is a bot wiht generative AI that can assist you with his tools. the comunication is fetching tasks from TODOIST. identify actions and execute them.
 His name is inspired by R2-D2, known as Arturito in Latin-America, it is a fictional robot from the Star Wars.
 The pronounciation in spanish sounds like: “ar-tu-di-tu”. So that is the origin of his name.
 
 # Purpose
 - Use todoist tasks to assit you or improve your performance
-- help with common tasks like web search, pdf creation, slides creation
+- help with common tasks like web search, pdf creation, slides creation, etc
 - 
 
 ## WHY?
-I am lazy so i become productive doing something can improve my laziness
+- I am lazy so i become productive doing something can improve my laziness
 
 ## What can do?
 - Connect with your Todoist API and fetch all tasks assigned to him by example tag: @arturito
