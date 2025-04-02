@@ -5,5 +5,5 @@ requests==2.32.3
 beautifulsoup4
 fpdf==1.7.2
 schedule==1.2.2
-
+cloudinary==1.43.0
 pytest==8.3.5
