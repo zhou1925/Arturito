@@ -1,0 +1,45 @@
+# .dockerignore
+
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# Python virtual environment
+.venv
+venv/
+env/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE specific folders
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Local configuration and secrets (should be mounted as volumes or passed as env vars)
+.env
+# Explicitly ignore the credentials file name defined in .env
+# Replace 'google_credentials.json' if you used a different name
+google_credentials.json
+
+# Test files and artifacts (if any)
+tests/
+*.log
+*.db # Ignore local SQLite DB if created during testing outside Docker
+
+# Docker specific files (already present)
+Dockerfile
+docker-compose.yml
+
+# Any build artifacts or distribution folders
+dist/
+build/
+*.egg-info/

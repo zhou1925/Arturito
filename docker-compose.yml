@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  arturito-agent:
+    build: .
+    container_name: arturito-agent
+    restart: unless-stopped
+    volumes:
+      - ./.env:/app/.env:ro # Mount as read-only for security
+
+
+networks:
+  default:
+    driver: bridge
