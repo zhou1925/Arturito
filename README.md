@@ -48,20 +48,18 @@ Tools is where you will put your custom class of your tool to create any by your
 
 - [X] implement todoist service
 - [X] implement google docs reader service
-- [ ] implement google sheets reader service
-- [ ] implement gemini service
-- [ ] implement cloudinary service (handle files)
-- [ ] 
-
-
-## CURRENT FEATURES
-- [ ] 
+- [X] implement google sheets reader service
+- [X] implement gemini service
+- [X] implement cloudinary service (handle files)
+- [X] implement agent
+- [X] implement orchestrator
+- [ ] refactor?
 
 
 ## FUTURE FEATURES
 - [ ] LONG MEMORY
 - [ ] MULTI TASK
-- [ ] 
+- [ ] Workflows
 
 
 ### Running tests
@@ -69,3 +67,22 @@ Tools is where you will put your custom class of your tool to create any by your
 ```
 pytest -v
 ```
+
+# PROBLEMS
+hmmm i think is a bit messy when i want to add a tool, inject the tool and service...
+i need a way to properly this works but more simplier. even myself i got lost when i need to add a new service and tool in this case the doc summarizer.
+
+- Prompts can be isolated i think ( maybe a yml file to write the instrucions or workflow?)
+
+## TOOLS
+[there is a problem in tools... i think]
+tools execute and we are not isolating the actions.
+
+## SERVICES
+- services are good i think,
+
+## RUTINES
+- we need to isolate our rutines for our agent
+
+## AGENT
+- is in charge of a lot of responsabilities... this guy needs be refactor
