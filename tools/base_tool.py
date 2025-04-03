@@ -24,8 +24,31 @@ class BaseTool(ABC):
             raise NotImplementedError(f"Tool subclass {self.__class__.__name__} must define a TRIGGER_TAG class attribute.")
 
         self.services = services
-        
+
         if not isinstance(self.services, dict):
              raise TypeError("Services must be provided as a dictionary.")
 
         logger.debug(f"Tool '{self.__class__.__name__}' initialized for tag '{self.TRIGGER_TAG}'.")
+    
+    @abstractmethod
+    def execute(self, task_details: Dict[str, Any]) -> str:
+        """
+        The main execution logic for the tool.
+        Args:
+            task_details: A dictionary containing relevant information about the
+                          Todoist task that triggered this tool (e.g., id, content,
+                          description, labels, extracted_links).
+        Returns:
+            A string containing the result of the execution (e.g., summary,
+            search results, status message) to be added as a comment,
+            or an empty string/specific code if no comment is needed but success,
+            or raise an exception on failure.
+        """
+        pass
+    
+    def _get_service(self, service_name: str) -> Any:
+        service = self.services.get(service_name)
+        if service is None:
+            logger.error(f"Required service '{service_name}' not found for tool {self.__class__.__name__}")
+            raise RuntimeError(f"Missing required service '{service_name}' for tool {self.__class__.__name__}")
+        return service
